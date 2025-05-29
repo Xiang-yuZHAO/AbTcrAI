@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TcrDesign - TCR智能设计系统 | ImmunoAI</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', 'Microsoft YaHei', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            color: white;
+            text-align: center;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .hero .subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        .hero .description {
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+            opacity: 0.8;
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+
+        .main-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #63b3ed 0%, #90cdf4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: #e2e8f0;
+            font-weight: 300;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .model-image-container {
+            width: 70%;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+            margin: 0 auto;
+        }
+
+        .model-image-container:hover {
+            transform: scale(1.02);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.2);
+        }
+
+        .model-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: all 0.3s ease;
+        }
+
+        .image-placeholder {
+            width: 100%;
+            height: 1000px;
+            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e0 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #4a5568;
+            font-size: 1.1rem;
+            border: 2px dashed #a0aec0;
+            transition: all 0.3s ease;
+        }
+
+        .image-placeholder:hover {
+            background: linear-gradient(135deg, #cbd5e0 0%, #a0aec0 100%);
+        }
+
+
+        /* 主要内容区域 */
+        main {
+            padding: 80px 0;
+        }
+
+        .section {
+            background: white;
+            margin-bottom: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .section-header {
+            background: linear-gradient(135deg, #3182ce 0%, #2c5282 100%);
+            color: white;
+            padding: 30px 40px;
+            text-align: center;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .section-description {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .section-content {
+            padding: 50px 40px;
+        }
+
+        /* 模型概述部分 */
+        .overview-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .overview-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #4a5568;
+        }
+
+        .highlight-text {
+            color: #2c5282;
+            font-weight: 600;
+        }
+
+        /* 性能说明部分 */
+        .performance-intro {
+            font-size: 1.2rem;
+            color: #2d3748;
+            margin-bottom: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            border-radius: 15px;
+            border-left: 5px solid #3182ce;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(135deg, #3182ce 0%, #63b3ed 100%);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .feature-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2c5282;
+            margin-bottom: 15px;
+        }
+
+        .feature-description {
+            color: #4a5568;
+            line-height: 1.7;
+        }
+
+        /* 开始设计按钮 */
+        .action-section {
+            text-align: center;
+            padding: 60px 0;
+            background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+            margin-top: 60px;
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(99, 179, 237, 0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(0.8); opacity: 0.3; }
+            50% { transform: scale(1.2); opacity: 0.1; }
+        }
+
+        .action-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .action-title {
+            font-size: 2.2rem;
+            color: white;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .action-subtitle {
+            font-size: 1.1rem;
+            color: #e2e8f0;
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .start-design-btn {
+            display: inline-block;
+            padding: 18px 40px;
+            background: linear-gradient(135deg, #3182ce 0%, #63b3ed 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(49, 130, 206, 0.3);
+            cursor: pointer;
+            border: none;
+        }
+
+        .start-design-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(49, 130, 206, 0.4);
+            background: linear-gradient(135deg, #2c5282 0%, #3182ce 100%);
+        }
+
+        /* 联系我们弹窗 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+            animation: slideIn 0.3s ease;
+            overflow: hidden;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #3182ce 0%, #2c5282 100%);
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .close {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .close:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 10px;
+            border-left: 4px solid #3182ce;
+            transition: all 0.3s ease;
+        }
+
+        .contact-item:hover {
+            background: #f1f5f9;
+            transform: translateX(5px);
+        }
+
+        .contact-icon {
+            font-size: 1.5rem;
+            margin-right: 15px;
+            color: #3182ce;
+            width: 30px;
+            text-align: center;
+        }
+
+        .contact-info h4 {
+            margin: 0 0 5px 0;
+            color: #2d3748;
+            font-size: 1.1rem;
+        }
+
+        .contact-info p {
+            margin: 0;
+            color: #4a5568;
+            font-size: 0.95rem;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2.2rem;
+            }
+
+            .subtitle {
+                font-size: 1.1rem;
+            }
+
+            .overview-content {
+                grid-template-columns: 12fr;
+                gap: 30px;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-content, .section-header {
+                padding: 30px 25px;
+            }
+
+            .action-title {
+                font-size: 1.8rem;
+            }
+
+            .modal-content {
+                margin: 10% auto;
+                width: 95%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <a href="#" class="logo">ImmunoAI</a>
+            <ul class="nav-links">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="index.html#features">核心优势</a></li>
+                <li class="dropdown">
+                    <a href="#services">数据资源</a>
+                    <div class="dropdown-content">
+                        <a href="tsmpdb.html">肿瘤膜蛋白数据库</a>
+                        <a href="neodb_page.html">肿瘤新抗原数据库</a>
+                    </div>
+                </li>
+                <li class="dropdown">
+                    <a href="#tools">AI设计工具</a>
+                    <div class="dropdown-content">
+                        <a href="antibody_design.html">抗体设计</a>
+                        <a href="tcr_design.html">TCR设计</a>
+                        <a href="antide.html">定向进化</a>
+                    </div>
+                </li>
+                <li><a href="contact_page.html">联系我们</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>TcrDesign</h1>
+            <p class="subtitle">基于生成式 AI 的 TCR 智能设计系统</p>
+        </div>
+    </section>
+
+    <section id="features" class="features">
+        <div class="container">
+            <h2 class="section-title">核心优势</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🧬</div>
+                    <h3>结合功能筛选，实现了全流程TCR设计自动化</h3>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>突破了现有方法仅能生成βCDR3序列的局限</h3>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🚀</div>
+                    <h3>实验验证闭环增强TCR设计的可靠性</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <main>
+        <div class="container">
+            <!-- 模型概述 -->
+            <section class="section">
+                <div class="section-header">
+                    <h2 class="section-title">模型概述</h2>
+                    <p class="section-description">行业内首次实现从头生成完整的 TCR 序列</p>
+                </div>
+                <div class="section-content">
+                    <div class="model-image-container">
+                            <img src="picture/TcrDesign_model.png" alt="TcrDesign模型架构图" class="model-image">
+                    </div>
+                    <br>
+                    <div class="overview-content">
+                        <div class="overview-text">
+                            <span class="highlight-text">TcrDesign</span>是我们自主研发的基于<span class="highlight-text">生成式 AI </span>的智能 TCR 序列设计系统，其核心亮点在于实现了<span class="highlight-text">TCR 生成与 pMHC 结合预测的端到端一体化管道</span>，通过<span class="highlight-text">双重预训练任务强化 pMHC 特征提取</span>以提升预测精度，并创新性地引入<span class="highlight-text">结构建模辅助筛选</span>，确保确保生成序列的生物学合理性与结合潜力，从而全面提升 TCR 序列设计的效率与准确性。
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 模型性能说明 -->
+            <section class="section">
+                <div class="section-header">
+                    <h2 class="section-title">模型性能说明</h2>
+                    <p class="section-description">行业领先的综合解决方案</p>
+                </div>
+                <div class="section-content">
+                    <div class="performance-intro">
+                        <strong>TcrDesign</strong>为 TCR 的从头生成提供了高效可靠的综合解决方案，在以下关键领域均达到行业领先水平：
+                    </div>
+                    <div class="model-image-container">
+                            <img src="picture/TcrDesign_perf.png" alt="DnAbDesign模型性能图" class="model-image">
+                    </div>
+                    <div class="features-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon">🧬</div>
+                            <h3 class="feature-title">全长新抗原特异性 TCR 的生成能力</h3>
+                            <p class="feature-description">TcrDesign-G 模型创新性地采纳了基于注意力机制的 Seq2Seq 架构设计，使其能够从头生成针对特定新抗原的全长 TCR 序列。</p>
+                        </div>
+
+                        <div class="feature-card">
+                            <div class="feature-icon">🔬</div>
+                            <h3 class="feature-title">基于 BERT 的高精度结合预测</h3>
+                            <p class="feature-description">TcrDesign-B 模型利用大规模公开数据进行训练，并基于预训练的 BERT 模型提取 TCR 序列与 pMHC 复合物的深度特征表示，从而实现了对 TCR-pMHC 结合概率的有效且高精度预测。</p>
+                        </div>
+
+                        <div class="feature-card">
+                            <div class="feature-icon">⚡</div>
+                            <h3 class="feature-title">多维度实验验证的功能活性</h3>
+                            <p class="feature-description">所生成的 TCR 序列的功能性得到了全面且严格的实验验证，包括但不限于 T 细胞激活检测、TCR-pMHC 分子特异性结合检测、细胞因子释放检测以及 T 细胞肿瘤靶向杀伤检测。</p>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+            <!-- 开始设计部分 -->
+            <div class="action-section">
+                <div class="action-content">
+                    <h2 class="action-title">开启智能 TCR 设计之旅</h2>
+                    <p class="action-subtitle">立即体验 TcrDesign 的强大功能，让AI助力您的 TCR-T 药物研发</p>
+                    <button class="start-design-btn" onclick="openModal()">开始设计</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 联系我们弹窗 -->
+    <div id="contactModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">联系我们</h3>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="contact-item">
+                    <div class="contact-icon">👤</div>
+                    <div class="contact-info">
+                        <h4>联系人</h4>
+                        <p>Dr. 刘雪松 研究员</p>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <div class="contact-icon">📧</div>
+                    <div class="contact-info">
+                        <h4>联系邮箱</h4>
+                        <p>liuxs@shanghaitech.edu.cn</p>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <div class="contact-icon">📍</div>
+                    <div class="contact-info">
+                        <h4>地址</h4>
+                        <p>上海市浦东新区华夏中路393号<br/>上海科技大学生命学院</p>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <div class="contact-icon">📞</div>
+                    <div class="contact-info">
+                        <h4>联系电话</h4>
+                        <p>+86-21-20685430</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openModal() {
+            document.getElementById('contactModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('contactModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // 点击弹窗外部区域关闭弹窗
+        window.onclick = function(event) {
+            const modal = document.getElementById('contactModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        // ESC键关闭弹窗
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // 添加页面加载动画
+        window.addEventListener('load', function() {
+            const sections = document.querySelectorAll('.section');
+            sections.forEach((section, index) => {
+                section.style.opacity = '0';
+                section.style.transform = 'translateY(30px)';
+                setTimeout(() => {
+                    section.style.transition = 'all 0.6s ease';
+                    section.style.opacity = '1';
+                    section.style.transform = 'translateY(0)';
+                }, index * 200);
+            });
+        });
+    </script>
+</body>
+</html>
